@@ -14,7 +14,7 @@ class TranscriptParser:
         output = []
         for semester in self.semesters:
             if 'Full-Time' not in semester: continue # only care about full-time
-            courses = parse_semester(semester)
+            courses = self._parse_semester(semester)
             output.extend(courses)
 
         return output
@@ -25,7 +25,6 @@ class TranscriptParser:
 
         # Get the term information
         info = re.findall('([a-z,A-Z,0-9,-]+)', lines.pop(0))
-        print(info)
 
         lines.pop(0) # Program info
         lines.pop(0) # Program info
