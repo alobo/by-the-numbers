@@ -13,7 +13,22 @@ class ActivityParser:
 
     @staticmethod
     def _parse_row(data):
-        date = data.find('div').text
-        title = data.find('a').text
-        netflix_id = data.find('a')['href'].split('/')[-1]
-        return {'date': date, 'netflix_id': netflix_id, 'title': title}
+        row = {
+            'date': data.find('div').text,
+            'netflix_id': data.find('a')['href'].split('/')[-1],
+            'title': data.find('a').text,
+            'movie': True
+        }
+
+        if 'Season' in row['title'] or 'Series' in row['title']:
+            row['movie'] = False
+            ep_data = row['title'].split('"')
+
+            try:
+                row['episode'] = ep_data[1::2][0] # Grab text in quotes
+                row['season'] = ep_data[0].split(':')[-2].strip().split(' ')[-1] # Get season number, right before quoted text
+                row['series'] = ep_data[0].split(':')[:-2][0] # Everything else is the series name
+            except:
+                print('Parsing error: ' + row['title'])
+
+        return row
