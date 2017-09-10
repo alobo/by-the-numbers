@@ -20,15 +20,32 @@ class ActivityParser:
             'movie': True
         }
 
-        if 'Season' in row['title'] or 'Series' in row['title']:
+        # Most of netflix tv show data is formatted as series:season X:episode
+        if 'Season' in row['title'] or 'Series' in row['title'] or 'Chapter' in row['title']:
             row['movie'] = False
-            ep_data = row['title'].split('"')
+            ep_data = row['title'].replace('"', '').split(':')
 
             try:
-                row['episode'] = ep_data[1::2][0] # Grab text in quotes
-                row['season'] = ep_data[0].split(':')[-2].strip().split(' ')[-1] # Get season number, right before quoted text
-                row['series'] = ep_data[0].split(':')[:-2][0] # Everything else is the series name
-            except:
+
+                # Handle the case where there are more than 2 colons
+                if (len(ep_data) != 3):
+                    # Find the season seperator
+                    for i, j in enumerate(ep_data):
+                        if 'Season' in j or 'Series' in j or 'Chapter' in j:
+                            idx_season = i
+                            break
+
+                    # Recombine into a list of 3
+                    ep_data = [':'.join(ep_data[0:idx_season]),
+                               ep_data[idx_season].strip(),
+                               ':'.join(ep_data[idx_season:]).strip()]
+
+                row['episode'] = ep_data[2]
+                row['season'] = ep_data[1].split(' ')[-1] # Get season number, right before quoted text
+                row['series'] = ep_data[0]
+
+            except Exception as e:
+                print(e)
                 print('Parsing error: ' + row['title'])
 
         return row
