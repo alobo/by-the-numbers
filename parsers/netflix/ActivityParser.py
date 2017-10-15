@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-class ActivityParser:
+class NetflixActivityParser:
 
     def __init__(self, filename):
         with open(filename) as f:
@@ -8,7 +8,7 @@ class ActivityParser:
             assert('Netflix' in self.soup.title)
 
     def parse(self):
-        output = map(ActivityParser._parse_row, self.soup.find_all('li', class_='retableRow'))
+        output = map(NetflixActivityParser._parse_row, self.soup.find_all('li', class_='retableRow'))
         return list(output)
 
     @staticmethod

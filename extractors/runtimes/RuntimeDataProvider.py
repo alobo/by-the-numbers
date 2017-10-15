@@ -2,14 +2,15 @@ import time
 import json
 import requests
 import pandas as pd
-from ActivityParser import ActivityParser
+import sys, os
+from parsers.netflix.ActivityParser import NetflixActivityParser
 
 with open('../../data/secrets.json') as f:
     secrets = json.load(f)
 
 def update_catalog():
     """Update the tv shows and movie runtime catalog with latest netflix data"""
-    ap = ActivityParser('../../data/netflix/NetflixData.htm')
+    ap = NetflixActivityParser('../../data/netflix/NetflixData.htm')
     nfx = pd.DataFrame(ap.parse())
 
     # Get updated list of TV Shows
