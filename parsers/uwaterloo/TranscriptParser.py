@@ -45,7 +45,10 @@ class TranscriptParser:
                 courses.append({
                     'term': info[2],
                     'date': ' '.join(info[0:2]),
-                    'course':       ' '.join(line[0:2]),
+                    'course': ' '.join(line[0:2]),
+                    'faculty': line[0],
+                    'year': line[1][0],
+                    'category': line[1][1],
                     'description':  ' '.join(line[2:desc_end]),
                     'attempt/earn': line[desc_end],
                     'grade': int(line[desc_end + 1]) if line[desc_end + 1] != 'CR' else None,
