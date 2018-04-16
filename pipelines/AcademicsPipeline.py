@@ -38,7 +38,7 @@ class AcademicsPipeline(Pipeline):
         self.transcript = pd.DataFrame(transcript_parser.parse())
 
     def load(self):
-        engine = create_engine('mysql://root@localhost/test')
+        engine = create_engine(self.secrets['mysql']['connector'])
 
         with engine.connect() as conn, conn.begin():
             self.logger.info('Loading Schedule')
