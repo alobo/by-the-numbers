@@ -5,6 +5,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from pipelines.AcademicsPipeline import AcademicsPipeline
 from pipelines.FinancePipeline import FinancePipeline
+from pipelines.MediaPipeline import MediaPipeline
 
 def main():
     logging.basicConfig(format='[%(module)s.%(funcName)s] %(message)s',
@@ -13,7 +14,8 @@ def main():
 
     PIPELINES = {
         'f': FinancePipeline,
-        'a': AcademicsPipeline
+        'a': AcademicsPipeline,
+        'm': MediaPipeline
     }
 
     if len(sys.argv) > 1:
