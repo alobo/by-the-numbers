@@ -10,7 +10,7 @@ from parsers.uwaterloo.TranscriptParser import TranscriptParser
 class AcademicsPipeline(Pipeline):
 
     DATA_SOURCE_SCHEDULE = 'data/google/Calendar/school-schedule.ics'
-    DATA_SOURCE_TRANSCRIPT = 'data/uwaterloo/transcript.txt'
+    DATA_SOURCE_TRANSCRIPT = 'data/uwaterloo/transcript.csv'
     DATA_SOURCE_IMPORTANT_DATES = 'data/uwaterloo/important_dates.csv'
 
     logger = logging.getLogger(__name__)
