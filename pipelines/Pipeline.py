@@ -21,7 +21,9 @@ class Pipeline(metaclass=ABCMeta):
 
             # string processing to remove comments and control characters
             lines = filter(lambda x: '--' not in x, lines)
-            lines = ''.join(lines).replace('\n', ' ').replace('\t', ' ').split(';')
+            lines = ''.join(lines).replace('\n', ' ').replace('\t', ' ')
+            lines = lines.replace('%', '%%') # escape % so the python sql driver doesn't get confused
+            lines = lines.split(';')
             lines = map(lambda x: x.strip(), lines)
             lines = filter(len, lines)
             lines = map(lambda x: x + ';', lines)
