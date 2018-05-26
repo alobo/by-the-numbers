@@ -11,6 +11,8 @@ class FinancePipeline(Pipeline):
     DATA_SOURCE_FINANCE = 'data/finance/bank.tsv'
     DATA_SOURCE_WATCARD = 'data/uwaterloo/watcard/watcard.htm'
 
+    VIEW_DEFINITION = 'views/finance.sql'
+
     logger = logging.getLogger(__name__)
 
     def __init__(self):
@@ -36,3 +38,5 @@ class FinancePipeline(Pipeline):
         engine = create_engine(self.secrets['mysql']['connector'])
         with engine.connect() as conn, conn.begin():
             self.finances.to_sql(name='finances', con=engine, if_exists = 'replace', index=False)
+            # create views
+            conn.execute(self.VIEW_DEFINITION_SQL)
