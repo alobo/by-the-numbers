@@ -2,11 +2,11 @@ import logging
 import pandas as pd
 from pathlib import Path
 from sqlalchemy import create_engine
-from pipelines.Pipeline import Pipeline
+from pipelines.SQLPipeline import SQLPipeline
 from parsers.finance.FinanceParser import FinanceParser
 from parsers.finance.WatcardParser import WatcardParser
 
-class FinancePipeline(Pipeline):
+class FinancePipeline(SQLPipeline):
 
     DATA_SOURCE_FINANCE = 'data/finance/bank.tsv'
     DATA_SOURCE_WATCARD = 'data/uwaterloo/watcard/watcard.htm'
@@ -16,7 +16,7 @@ class FinancePipeline(Pipeline):
     logger = logging.getLogger(__name__)
 
     def __init__(self):
-        Pipeline.__init__(self)
+        super().__init__()
 
     def extract(self):
         self.logger.info('Extract')
@@ -39,4 +39,4 @@ class FinancePipeline(Pipeline):
         with engine.connect() as conn, conn.begin():
             self.finances.to_sql(name='finances', con=engine, if_exists = 'replace', index=False)
             # create views
-            conn.execute(self.VIEW_DEFINITION_SQL)
+            SQLPipeline.executeSQL(engine, self.VIEW_DEFINITION)
