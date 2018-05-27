@@ -47,6 +47,9 @@ class AcademicsPipeline(Pipeline):
 
         with engine.connect() as conn, conn.begin():
             self.logger.info('Loading Schedule')
+            # Hack to strip TZ info before SQL insert
+            self.schedule.start = (self.schedule.start).apply(lambda d: pd.to_datetime(str(d)))
+            self.schedule.end = (self.schedule.end).apply(lambda d: pd.to_datetime(str(d)))
             self.schedule.to_sql(name='schedule', con=engine, if_exists = 'replace', index=False)
 
             self.logger.info('Loading Important Dates')
