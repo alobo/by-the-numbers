@@ -44,7 +44,7 @@ class CalendarParser:
                         'type': info[2].upper(),
                         'start': event,
                         'end': event + duration,
-                        'duration': duration
+                        'duration': duration / pd.Timedelta('1 min') # convert to minutes
                     })
         return out
 
