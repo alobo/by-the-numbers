@@ -40,8 +40,8 @@ class CalendarParser:
                 for event in events:
                     out.append({
                         'course': ' '.join(info[0:2]),
-                        'faculty': info[0],
-                        'type': info[2],
+                        'faculty': info[0].upper(),
+                        'type': info[2].upper(),
                         'start': event,
                         'end': event + duration,
                         'duration': duration
