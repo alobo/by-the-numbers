@@ -3,20 +3,22 @@ import pandas as pd
 from pathlib import Path
 from sqlalchemy import create_engine
 
-from pipelines.Pipeline import Pipeline
+from pipelines.SQLPipeline import SQLPipeline
 from parsers.google.CalendarParser import CalendarParser
 from parsers.uwaterloo.TranscriptParser import TranscriptParser
 
-class AcademicsPipeline(Pipeline):
+class AcademicsPipeline(SQLPipeline):
 
     DATA_SOURCE_SCHEDULE = 'data/google/Calendar/school-schedule.ics'
     DATA_SOURCE_TRANSCRIPT = 'data/uwaterloo/transcript.csv'
     DATA_SOURCE_IMPORTANT_DATES = 'data/uwaterloo/important_dates.csv'
 
+    VIEW_DEFINITION = 'views/academics.sql'
+
     logger = logging.getLogger(__name__)
 
     def __init__(self):
-        Pipeline.__init__(self)
+        super().__init__()
 
     def extract(self):
         self.logger.info('Extract')
@@ -57,3 +59,5 @@ class AcademicsPipeline(Pipeline):
 
             self.logger.info('Loading Transcript')
             self.transcript.to_sql(name='transcript', con=engine, if_exists = 'replace', index=False)
+
+            SQLPipeline.executeSQL(engine, self.VIEW_DEFINITION)
