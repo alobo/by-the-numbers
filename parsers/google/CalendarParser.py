@@ -20,14 +20,21 @@ class CalendarParser:
 
                 events = []
                 info = CalendarParser._get_event_info(component.get('summary'))
-                duration = component.get('dtend').dt - component.get('dtstart').dt
+                start = component.get('dtstart').dt
+                end = component.get('dtend').dt
+                duration = end - start
+
+                # Ensure all timezones are UTC
+                if (start.tzinfo != pytz.UTC):
+                    start = start.astimezone(pytz.utc)
+                    end = end.astimezone(pytz.utc)
 
                 # Expand recurring rules
                 if not component.get('rrule'):
-                    events.append(component.get('dtstart').dt)
+                    events.append(start)
                 else:
                     expand = rrule.rrulestr(component.get('rrule').to_ical().decode('utf-8'),
-                                            dtstart=component.get('dtstart').dt)
+                                            dtstart=start)
                     events.extend(list(expand))
 
                 for event in events:
