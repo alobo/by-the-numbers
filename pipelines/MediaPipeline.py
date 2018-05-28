@@ -2,11 +2,11 @@ import logging
 import pandas as pd
 from pathlib import Path
 from sqlalchemy import create_engine
-from pipelines.Pipeline import Pipeline
+from pipelines.SQLPipeline import SQLPipeline
 from parsers.netflix.ActivityParser import NetflixActivityParser
 from parsers.hbonow.ActivityParser import HBONowActivityParser
 
-class MediaPipeline(Pipeline):
+class MediaPipeline(SQLPipeline):
 
     DATA_SOURCE_NETFLIX = 'data/netflix/NetflixData.htm'
     DATA_SOURCE_HBONOW = 'data/hbonow/history.csv'
@@ -14,10 +14,12 @@ class MediaPipeline(Pipeline):
     DATA_SOURCE_RUNTIMES_TV = 'data/netflix/runtimes_tv.csv'
     DATA_SOURCE_RUNTIMES_MOVIE = 'data/netflix/runtimes_movies.csv'
 
+    VIEW_DEFINITION = 'views/media.sql'
+
     logger = logging.getLogger(__name__)
 
     def __init__(self):
-        Pipeline.__init__(self)
+        super().__init__()
 
     def extract(self):
         self.logger.info('Extract')
@@ -58,3 +60,4 @@ class MediaPipeline(Pipeline):
         engine = create_engine(self.secrets['mysql']['connector'])
         with engine.connect() as conn, conn.begin():
             self.media.to_sql(name='media', con=engine, if_exists = 'replace', index=False)
+            SQLPipeline.executeSQL(engine, self.VIEW_DEFINITION)
