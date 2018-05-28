@@ -13,7 +13,7 @@ class AcademicsPipeline(SQLPipeline):
     DATA_SOURCE_TRANSCRIPT = 'data/uwaterloo/transcript.csv'
     DATA_SOURCE_IMPORTANT_DATES = 'data/uwaterloo/important_dates.csv'
 
-    VIEW_DEFINITION = 'views/academics.sql'
+    VIEW_DEFINITION = 'sql/academics.sql'
 
     logger = logging.getLogger(__name__)
 

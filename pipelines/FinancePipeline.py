@@ -11,7 +11,7 @@ class FinancePipeline(SQLPipeline):
     DATA_SOURCE_FINANCE = 'data/finance/bank.tsv'
     DATA_SOURCE_WATCARD = 'data/uwaterloo/watcard/watcard.htm'
 
-    VIEW_DEFINITION = 'views/finance.sql'
+    VIEW_DEFINITION = 'sql/finance.sql'
 
     logger = logging.getLogger(__name__)
 

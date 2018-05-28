@@ -14,7 +14,7 @@ class MediaPipeline(SQLPipeline):
     DATA_SOURCE_RUNTIMES_TV = 'data/netflix/runtimes_tv.csv'
     DATA_SOURCE_RUNTIMES_MOVIE = 'data/netflix/runtimes_movies.csv'
 
-    VIEW_DEFINITION = 'views/media.sql'
+    VIEW_DEFINITION = 'sql/media.sql'
 
     logger = logging.getLogger(__name__)
 

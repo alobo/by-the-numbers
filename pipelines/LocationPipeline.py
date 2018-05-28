@@ -10,7 +10,7 @@ class LocationPipeline(SQLPipeline):
     DATA_SOURCE_LOCATION = 'data/google/Location History/Location History.json'
     DATA_SOURCE_IMPORTANT_LOCATIONS = 'data/important_locations.csv'
 
-    VIEW_DEFINITION = 'views/location.sql'
+    VIEW_DEFINITION = 'sql/location.sql'
 
     logger = logging.getLogger(__name__)
 
