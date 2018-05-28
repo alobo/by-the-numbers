@@ -1,7 +1,7 @@
 -- Aggregate all transactions related to coffeeshops
 DROP VIEW IF EXISTS finance_coffee_spend;
 CREATE VIEW finance_coffee_spend AS
-SELECT term, SUM(amount) AS finance_coffee_spend
+SELECT term, SUM(amount) AS coffee_spend, COUNT(*) AS coffee_events
 FROM finances
 LEFT JOIN important_dates ON finances.date BETWEEN important_dates.start AND important_dates.end
 WHERE amount < 0 AND (
