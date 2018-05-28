@@ -2,17 +2,19 @@ import logging
 import pandas as pd
 from pathlib import Path
 from sqlalchemy import create_engine
-from pipelines.Pipeline import Pipeline
+from pipelines.SQLPipeline import SQLPipeline
 from parsers.google.LocationHistoryParser import LocationHistoryParser
 
-class LocationPipeline(Pipeline):
+class LocationPipeline(SQLPipeline):
 
     DATA_SOURCE_LOCATION = 'data/google/Location History/Location History.json'
+
+    VIEW_DEFINITION = 'views/location.sql'
 
     logger = logging.getLogger(__name__)
 
     def __init__(self):
-        Pipeline.__init__(self)
+        super().__init__()
 
     def extract(self):
         self.logger.info('Extract')
@@ -27,4 +29,6 @@ class LocationPipeline(Pipeline):
         self.logger.info('Loading Location History')
         engine = create_engine(self.secrets['mysql']['connector'])
         with engine.connect() as conn, conn.begin():
+            engine.execute('DROP TABLE IF EXISTS location;')
             self.location.to_sql(name='location', con=engine, if_exists = 'replace', index=False)
+            SQLPipeline.executeSQL(engine, self.VIEW_DEFINITION)
