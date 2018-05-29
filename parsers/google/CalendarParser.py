@@ -1,3 +1,4 @@
+import logging
 from icalendar import Calendar, Event
 import dateutil.rrule as rrule
 from datetime import timezone
@@ -5,6 +6,8 @@ import pytz
 import pandas as pd
 
 class CalendarParser:
+
+    logger = logging.getLogger(__name__)
 
     def __init__(self, filename):
         with open(filename) as f:
@@ -20,6 +23,11 @@ class CalendarParser:
 
                 events = []
                 info = CalendarParser._get_event_info(component.get('summary'))
+
+                if not info:
+                    self.logger.warn('Parsing failed for event "{}"'.format(component.get('summary')))
+                    continue
+
                 start = component.get('dtstart').dt
                 end = component.get('dtend').dt
                 duration = end - start
