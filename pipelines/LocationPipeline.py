@@ -10,6 +10,7 @@ class LocationPipeline(SQLPipeline):
     DATA_SOURCE_LOCATION = 'data/google/Location History/Location History.json'
     DATA_SOURCE_IMPORTANT_LOCATIONS = 'data/important_locations.csv'
 
+    TABLE_PREP_DEFINITION = 'sql/location-table-prep.sql'
     VIEW_DEFINITION = 'sql/location.sql'
 
     logger = logging.getLogger(__name__)
@@ -35,4 +36,5 @@ class LocationPipeline(SQLPipeline):
             engine.execute('DROP TABLE IF EXISTS location;')
             self.location.to_sql(name='location', con=engine, if_exists = 'replace', index=False)
             self.important_locations.to_sql(name='important_locations', con=engine, if_exists = 'replace', index=False)
+            SQLPipeline.executeSQL(engine, self.TABLE_PREP_DEFINITION)
             SQLPipeline.executeSQL(engine, self.VIEW_DEFINITION)

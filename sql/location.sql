@@ -1,10 +1,3 @@
--- Create point datastructure for easier geoqueries
-ALTER TABLE `location` ADD COLUMN loc POINT AFTER latitude;
-UPDATE `location` SET loc = POINT(longitude, latitude);
-
--- Add indexes
-ALTER TABLE `location` ADD INDEX `datetime_index` (`datetime` ASC);
-
 -- Attendance view - check GPS coordinates during calendar events (classes)
 DROP VIEW IF EXISTS event_attendance;
 CREATE VIEW event_attendance AS
