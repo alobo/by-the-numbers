@@ -20,3 +20,17 @@ FROM
 	LEFT JOIN `schedule` ON location.datetime BETWEEN `schedule`.start AND `schedule`.end
 	WHERE course IS NOT NULL) as location_during_event
 GROUP BY start;
+
+-- Calculate the number of times I visited home
+DROP VIEW IF EXISTS location_home_visits;
+CREATE VIEW location_home_visits AS
+SELECT term,
+	-- Subtract 1 to account for travel on the last day
+	SUM(CASE WHEN name LIKE "home%" THEN 1 END) - 1 as days_at_home
+FROM
+	-- Subquery required because each day has many GPS coordinates
+	(SELECT DATE(datetime) as date, name FROM location
+	WHERE name IS NOT NULL
+	GROUP BY DATE(datetime), name) as daily_location
+LEFT JOIN important_dates ON DATE(daily_location.date) BETWEEN important_dates.start AND important_dates.end
+GROUP BY term;
