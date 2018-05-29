@@ -21,7 +21,11 @@ class NetflixActivityParser:
         }
 
         # Most of netflix tv show data is formatted as series:season X:episode
-        if 'Season' in row['title'] or 'Series' in row['title'] or 'Chapter' in row['title']:
+        if 'Season' in row['title'] or \
+            'Series' in row['title'] or \
+            'Chapter' in row['title'] or \
+            row['title'].count(':') >= 2:
+
             row['movie'] = False
             ep_data = row['title'].replace('"', '').split(':')
 
@@ -35,14 +39,17 @@ class NetflixActivityParser:
                             idx_season = i
                             break
 
-                    # Recombine into a list of 3
-                    ep_data = [':'.join(ep_data[0:idx_season]),
-                               ep_data[idx_season].strip(),
-                               ':'.join(ep_data[idx_season:]).strip()]
+                    episode = ':'.join(ep_data[idx_season:])
+                    season = ep_data[idx_season]
+                    series = ':'.join(ep_data[0:idx_season])
 
-                row['episode'] = ep_data[2]
-                row['season'] = ep_data[1].split(' ')[-1] # Get season number, right before quoted text
-                row['series'] = ep_data[0]
+                    # Recombine into a list of 3 so the regular parse flow can resume
+                    ep_data = [series, season, episode]
+
+
+                row['episode'] = ep_data[2].strip()
+                row['season'] = ep_data[1].split(' ')[-1].strip() # Get season number, right before quoted text
+                row['series'] = ep_data[0].strip()
 
             except Exception as e:
                 print(e)
