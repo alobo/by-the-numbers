@@ -1,3 +1,4 @@
+import warnings
 from pipelines.Pipeline import Pipeline
 
 class SQLPipeline(Pipeline):
@@ -46,5 +47,7 @@ class SQLPipeline(Pipeline):
 
         sql = SQLPipeline._processSQL(sql)
 
-        for statement in sql:
-            engine.execute(statement)
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            for statement in sql:
+                engine.execute(statement)
