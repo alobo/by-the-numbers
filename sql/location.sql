@@ -1,6 +1,6 @@
 -- Attendance view - check GPS coordinates during calendar events (classes)
-DROP VIEW IF EXISTS event_attendance;
-CREATE VIEW event_attendance AS
+DROP VIEW IF EXISTS location_event_attendance;
+CREATE VIEW location_event_attendance AS
 SELECT start,
 	   MIN(course) as course,
 	   MIN(type) as type,
@@ -20,6 +20,13 @@ FROM
 	LEFT JOIN `schedule` ON location.datetime BETWEEN `schedule`.start AND `schedule`.end
 	WHERE course IS NOT NULL) as location_during_event
 GROUP BY start;
+
+-- Calculate academic event attendance
+DROP VIEW IF EXISTS location_aggregate_event_attendance;
+CREATE VIEW location_aggregate_event_attendance AS
+SELECT term, AVG(present) as attendance FROM location_event_attendance
+LEFT JOIN important_dates ON location_event_attendance.start BETWEEN important_dates.start AND important_dates.end
+GROUP BY term;
 
 -- Calculate the number of times I visited home
 DROP VIEW IF EXISTS location_home_visits;
