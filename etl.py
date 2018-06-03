@@ -4,6 +4,7 @@ import logging
 import pandas as pd
 from sqlalchemy import create_engine
 from pipelines.AcademicsPipeline import AcademicsPipeline
+from pipelines.LocationPipeline import LocationPipeline
 from pipelines.FinancePipeline import FinancePipeline
 from pipelines.MediaPipeline import MediaPipeline
 
@@ -13,8 +14,9 @@ def main():
                     level=logging.INFO)
 
     PIPELINES = {
-        'f': FinancePipeline,
         'a': AcademicsPipeline,
+        'l': LocationPipeline,
+        'f': FinancePipeline,
         'm': MediaPipeline
     }
 
