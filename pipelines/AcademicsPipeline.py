@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 
 from pipelines.SQLPipeline import SQLPipeline
 from parsers.google.CalendarParser import CalendarParser
+from parsers.uwaterloo.EmailParser import EmailParser
 from parsers.uwaterloo.TranscriptParser import TranscriptParser
 
 class AcademicsPipeline(SQLPipeline):
@@ -12,6 +13,7 @@ class AcademicsPipeline(SQLPipeline):
     DATA_SOURCE_SCHEDULE = 'data/google/Calendar/school-schedule.ics'
     DATA_SOURCE_TRANSCRIPT = 'data/uwaterloo/transcript.csv'
     DATA_SOURCE_IMPORTANT_DATES = 'data/uwaterloo/important_dates.csv'
+    DATA_SOURCE_EMAIL = ['data/uwaterloo/mail/Inbox.mbox', 'data/uwaterloo/mail/Archive.mbox', 'data/uwaterloo/mail/Gmail-Fwd.mbox']
 
     VIEW_DEFINITION = 'sql/academics.sql'
 
@@ -25,6 +27,8 @@ class AcademicsPipeline(SQLPipeline):
         assert(Path(AcademicsPipeline.DATA_SOURCE_SCHEDULE).is_file())
         assert(Path(AcademicsPipeline.DATA_SOURCE_TRANSCRIPT).is_file())
         assert(Path(AcademicsPipeline.DATA_SOURCE_IMPORTANT_DATES).is_file())
+        for email_archive in AcademicsPipeline.DATA_SOURCE_EMAIL:
+            assert(Path(email_archive).is_file())
 
     def transform(self):
         self.logger.info('Processing Schedule')
@@ -44,6 +48,15 @@ class AcademicsPipeline(SQLPipeline):
         transcript_parser = TranscriptParser(AcademicsPipeline.DATA_SOURCE_TRANSCRIPT)
         self.transcript = pd.DataFrame(transcript_parser.parse())
 
+        self.logger.info('Processing Email')
+        self.email = pd.DataFrame()
+        for email_archive in AcademicsPipeline.DATA_SOURCE_EMAIL:
+            email_parser = EmailParser(email_archive)
+            self.email = self.email.append(email_parser.parse())
+
+        self.email = self.email.drop_duplicates(subset=['date', 'subject'], keep='first')
+        self.email = self.email.sort_values(by='date').reset_index(drop=True)
+
     def load(self):
         engine = create_engine(self.secrets['mysql']['connector'])
 
@@ -59,5 +72,8 @@ class AcademicsPipeline(SQLPipeline):
 
             self.logger.info('Loading Transcript')
             self.transcript.to_sql(name='transcript', con=engine, if_exists = 'replace', index=False)
+
+            self.logger.info('Loading Email')
+            self.email.to_sql(name='email', con=engine, if_exists = 'replace', index=False)
 
             SQLPipeline.executeSQL(engine, self.VIEW_DEFINITION)
