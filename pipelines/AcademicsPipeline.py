@@ -34,6 +34,7 @@ class AcademicsPipeline(SQLPipeline):
         self.logger.info('Processing Schedule')
         calendar_parser = CalendarParser(AcademicsPipeline.DATA_SOURCE_SCHEDULE)
         self.schedule = pd.DataFrame(calendar_parser.parse())
+        self.schedule = self.schedule.drop_duplicates(subset=['course', 'start'], keep='first')
         self.schedule = self.schedule.sort_values(by='start').reset_index(drop=True)
 
         self.logger.info('Processing Important Dates')
