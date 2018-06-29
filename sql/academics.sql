@@ -22,7 +22,9 @@ GROUP BY term, semester;
 -- Aggregate all interviews received from CECA
 DROP VIEW IF EXISTS academics_coop_interviews;
 CREATE VIEW academics_coop_interviews AS
-SELECT term, semester, COUNT(*) FROM email
-LEFT JOIN important_dates ON email.date BETWEEN important_dates.start AND important_dates.end
-WHERE email.subject = "uW Pick Interview Slot"
-GROUP BY term, semester
+SELECT term, semester,
+	SUM(CASE WHEN subject = "uW Pick Interview Slot" then 1 else 0 END) as interviews
+FROM email
+RIGHT JOIN important_dates ON (email.date BETWEEN important_dates.start AND important_dates.end) AND email.subject = "uW Pick Interview Slot"
+WHERE period != 'coop'
+GROUP BY term, semester;
